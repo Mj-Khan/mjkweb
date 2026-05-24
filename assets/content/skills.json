@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "name": "Core",
+      "skills": [
+        { "name": "Dart", "years_used": null, "proficiency": null },
+        { "name": "Flutter", "years_used": null, "proficiency": null },
+        { "name": "BLoC", "years_used": null, "proficiency": null },
+        { "name": "GetX", "years_used": null, "proficiency": null },
+        { "name": "Riverpod", "years_used": null, "proficiency": null },
+        { "name": "Native Platform Channels", "years_used": null, "proficiency": null }
+      ]
+    },
+    {
+      "name": "Backend & APIs",
+      "skills": [
+        { "name": "REST", "years_used": null, "proficiency": null },
+        { "name": "GraphQL", "years_used": null, "proficiency": null },
+        { "name": "Firebase", "years_used": null, "proficiency": null },
+        { "name": "Swagger", "years_used": null, "proficiency": null },
+        { "name": "Stripe", "years_used": null, "proficiency": null },
+        { "name": "Razorpay", "years_used": null, "proficiency": null },
+        { "name": "PayPal", "years_used": null, "proficiency": null }
+      ]
+    },
+    {
+      "name": "Maps, Vehicle & Monitoring",
+      "skills": [
+        { "name": "Google Maps SDK", "years_used": null, "proficiency": null },
+        { "name": "Google Places API", "years_used": null, "proficiency": null },
+        { "name": "Smartcar SDK", "years_used": null, "proficiency": null },
+        { "name": "Sentry", "years_used": null, "proficiency": null },
+        { "name": "Firebase Crashlytics", "years_used": null, "proficiency": null }
+      ]
+    },
+    {
+      "name": "Tools",
+      "skills": [
+        { "name": "Git", "years_used": null, "proficiency": null },
+        { "name": "GitHub", "years_used": null, "proficiency": null },
+        { "name": "GitLab", "years_used": null, "proficiency": null },
+        { "name": "Android Studio", "years_used": null, "proficiency": null },
+        { "name": "Xcode", "years_used": null, "proficiency": null },
+        { "name": "VS Code", "years_used": null, "proficiency": null },
+        { "name": "Postman", "years_used": null, "proficiency": null }
+      ]
+    },
+    {
+      "name": "Currently Learning",
+      "skills": [
+        { "name": "Kotlin", "years_used": null, "proficiency": null },
+        { "name": "Jetpack Compose", "years_used": null, "proficiency": null }
+      ]
+    }
+  ]
+}

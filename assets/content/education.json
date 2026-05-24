@@ -1,0 +1,22 @@
+{
+  "qualifications": [
+    {
+      "id": "bca-manipal",
+      "degree": "Bachelor of Computer Applications (BCA)",
+      "institution": "Manipal University Online",
+      "location": null,
+      "start_date": "2026-03",
+      "end_date": null,
+      "status": "in_progress"
+    },
+    {
+      "id": "diploma-civil-nsakce",
+      "degree": "Diploma in Civil Engineering",
+      "institution": "Nawab Shah Alam Khan College of Engineering",
+      "location": "Hyderabad",
+      "start_date": "2017-01",
+      "end_date": "2020-12",
+      "status": "completed"
+    }
+  ]
+}
