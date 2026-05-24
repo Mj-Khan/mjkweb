@@ -27,9 +27,9 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.2'
+          flutter-version: "3.41.2"
           channel: stable
-          cache: true   # Cache Flutter SDK between runs (~2 min savings)
+          cache: true # Cache Flutter SDK between runs (~2 min savings)
 
       # 3. Install dependencies
       - name: Install dependencies
@@ -41,7 +41,7 @@ jobs:
       #    ⚠️  If you ever move to a project repo (e.g. github.com/mj-khan/portfolio),
       #         change --base-href "/" to --base-href "/portfolio/"
       - name: Build Flutter Web (release)
-        run: flutter build web --release --base-href "/"
+        run: flutter build web --release --base-href "/mjkweb/"
 
       # 5. Add .nojekyll so GitHub Pages serves Flutter's _flutter/ directory.
       #    Without this, Pages strips any folder/file starting with underscore.
@@ -62,6 +62,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
-          publish_branch: gh-pages     # ← branch GitHub Pages serves from
+          publish_branch: gh-pages # ← branch GitHub Pages serves from
           # user_name: 'github-actions[bot]'
           # user_email: 'github-actions[bot]@users.noreply.github.com'
