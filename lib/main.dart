@@ -39,7 +39,7 @@ void main() async {
   }
 
   runApp(
-    _PortfolioApp(
+    PortfolioApp(
       content: content,
       siteConfig: siteConfig,
       loadError: loadError,
@@ -47,12 +47,12 @@ void main() async {
   );
 }
 
-class _PortfolioApp extends StatelessWidget {
+class PortfolioApp extends StatelessWidget {
   final ContentRepository? content;
   final SiteConfig? siteConfig;
   final Object? loadError;
 
-  const _PortfolioApp({
+  const PortfolioApp({super.key, 
     this.content,
     this.siteConfig,
     this.loadError,
