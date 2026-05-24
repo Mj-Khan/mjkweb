@@ -21,7 +21,7 @@ jobs:
     steps:
       # 1. Check out the source code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # 2. Set up Flutter (pinned to 3.41.2 for deterministic builds)
       - name: Set up Flutter
@@ -58,7 +58,7 @@ jobs:
       #    ⚠️  CNAME: If you add a custom domain, place a CNAME file in web/
       #         (tracked in git) so it is included in every deployment.
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
