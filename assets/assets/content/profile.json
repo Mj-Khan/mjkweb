@@ -1,0 +1,13 @@
+{
+  "name": "Abdul Mujeeb Khan",
+  "tagline": "Senior Flutter Developer · 5 Years · Cross-Platform Mobile · Consumer & Enterprise",
+  "short_summary": "Spent the last 5 years building Flutter apps across pretty different worlds — consumer eSIM, US enterprise SaaS, an EV charging marketplace, an LMS, logistics, and a Vedic scripture platform. Six are live on Google Play with users in the US, UAE/KSA, and India. Comfortable owning a codebase solo or leading a small team, and good at ramping into unfamiliar domains. Open to fully remote roles with international teams.",
+  "long_summary": "I've been writing Flutter since 2020 and shipped across some genuinely different domains in that time. Consumer telecom (eSIM and travel services), US enterprise SaaS for construction firms, a two-sided EV charging marketplace, an LMS for a US academy, fleet inspection tooling for a Canadian client, warehouse logistics for an enterprise customer, and a multilingual Vedic scripture platform. Six of those are live on Google Play right now with users across the US, UAE, KSA, and India.\n\nThe range matters because the work hasn't been the same problem in different wrappers. ZetSIM needed multi-currency and native platform channels for eSIM activation. SplitEV needed Smartcar SDK telemetry and a subscription model that worked for both drivers and charger hosts. Svarupa needs a tap-any-word linguistic toolbox surfacing morphology and svara across 19 languages. Each one taught me something different about state management, payments, native integration, or UX in a non-obvious domain.\n\nI'm equally fine owning a codebase end-to-end (InspireABA was solo, Phase 1 of the warehouse trailer analytics platform was solo) or leading a small mobile team (I led 4 developers on SplitEV, 3 on ZetSIM). I'm currently in Hyderabad but open to fully remote roles with international teams.",
+  "location": "Hyderabad, India",
+  "available_for": "Open to remote (global)",
+  "email": "mjkhan7124@gmail.com",
+  "phone": null,
+  "linkedin_url": "https://linkedin.com/in/abdul-mujeeb-khan",
+  "github_url": "https://github.com/Mj-Khan",
+  "portfolio_url": null
+}

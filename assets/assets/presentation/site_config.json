@@ -1,0 +1,99 @@
+{
+  "hero": {
+    "avatar_filename": "mjk_profile.dart",
+    "eyebrow": "SR. FLUTTER DEVELOPER _",
+    "headline": "Building Production-Grade Mobile Systems.",
+    "sub_headline": "Flutter-focused engineer delivering scalable architectures, clean state management, and real-world deployments.",
+    "metrics": [
+      { "value": "05", "label": "YEARS BUILDING FLUTTER" },
+      { "value": "06", "label": "APPS LIVE ON GOOGLE PLAY" },
+      { "value": "10", "label": "PROJECTS SHIPPED" }
+    ],
+    "avatar_code": [
+      "class MJKhan extends Engineer {",
+      "  final role = 'Sr. Flutter Dev';",
+      "  final exp  = '5+ years';",
+      "  final stack = ['Flutter', 'Dart'];",
+      "  bool get isAvailable => true;",
+      "}"
+    ],
+    "cta_primary":   { "label": "VIEW PROJECTS", "target": "work" },
+    "cta_secondary": { "label": "GET IN TOUCH",  "target": "contact" }
+  },
+
+  "now": {
+    "show_now_module": true,
+    "working":      "Svarupa — multilingual Vedic scripture platform",
+    "learning":     "Kotlin & Jetpack Compose",
+    "reading":      null,
+    "open_to":      "Remote Flutter roles (global)",
+    "last_updated": "2026-05"
+  },
+
+  "work": {
+    "heading":         "Featured Work",
+    "sub_line":        "Selected projects from production.",
+    "show_more_label": "SHOW MORE PROJECTS",
+    "show_less_label": "SHOW LESS"
+  },
+
+  "experience": {
+    "heading":  "Experience",
+    "sub_line": "5 years of production Flutter delivery across US, UAE, and global clients."
+  },
+
+  "stack": {
+    "heading":  "Stack",
+    "sub_line": "Technologies I use day-to-day in production."
+  },
+
+  "contact": {
+    "heading":  "Let's build something.",
+    "sub_line": "Open to remote Flutter roles, freelance projects, and interesting collabs.",
+    "form_fields": {
+      "name_placeholder":    "> your_name",
+      "email_placeholder":   "> your_email",
+      "subject_placeholder": "> subject",
+      "message_placeholder": "> message..."
+    },
+    "submit_label":      "SEND",
+    "success_primary":   "OPENING YOUR MAIL CLIENT",
+    "success_secondary": "If nothing opened, email mjkhan7124@gmail.com directly.",
+    "direct_note":       "// or email me directly at mjkhan7124@gmail.com"
+  },
+
+  "footer": {
+    "copyright":  "© 2026 ABDUL MUJEEB KHAN",
+    "built_with": "BUILT WITH FLUTTER WEB"
+  },
+
+  "navSections": ["hero", "work", "experience", "stack", "contact"],
+
+  "socialIconMap": {
+    "email":    "email_outlined",
+    "github":   "code_rounded",
+    "linkedin": "work_outline_rounded"
+  },
+
+  "iconMap": {
+    "projects": {
+      "svarupa":           "auto_awesome_outlined",
+      "trailer-analytics": "bar_chart_outlined",
+      "vhub-inspection":   "camera_alt_outlined",
+      "zetsim":            "sim_card_outlined",
+      "split-ev":          "electric_car_outlined",
+      "super-construct":   "construction_outlined",
+      "falek-tayyeb":      "mosque_outlined",
+      "inspire-aba":       "school_outlined",
+      "feet-first":        "directions_walk_outlined",
+      "magic-shake":       "touch_app_outlined"
+    },
+    "skill_categories": {
+      "Core":                       "code_rounded",
+      "Backend & APIs":             "cloud_outlined",
+      "Maps, Vehicle & Monitoring": "map_outlined",
+      "Tools":                      "build_outlined",
+      "Currently Learning":         "school_outlined"
+    }
+  }
+}

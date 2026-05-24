@@ -1,0 +1,57 @@
+{
+  "roles": [
+    {
+      "id": "soulax-senior-mobile",
+      "company": "Soulax Software Pvt Ltd",
+      "title": "Senior Mobile Application Developer",
+      "location": "Hyderabad, India",
+      "work_mode": "on-site",
+      "start_date": "2025-07",
+      "end_date": "Present",
+      "context_line": "Service-based company with US, Canadian, and global enterprise clients",
+      "bullets": [
+        "Effectively own development, maintenance, and release management for Svarupa, the company's flagship multilingual scripture platform, after team transitions; the company-wide Team Lead provides high-level oversight.",
+        "Owned Phase 1 end-to-end of an enterprise warehouse trailer-analytics platform: login, UI/UX, REST API integration, and barcode/pallet scanning.",
+        "Maintain vHUB Inspection (Finloc 2000, Canada) — resolved 18+ production bugs and shipped a Google Places API-powered address-search feature for trailer inspections.",
+        "Run multiple concurrent projects across consumer, enterprise, and B2B domains; balance ownership-heavy work with maintenance support depending on the engagement.",
+        "Collaborate with senior and lead engineers across mobile delivery; act as technical reviewer on releases and coordinate with backend, QA, and product teams across time zones."
+      ]
+    },
+    {
+      "id": "zetexa-mts-l2",
+      "company": "Zetexa Global",
+      "title": "Member of Technical Staff (L2)",
+      "location": "Hyderabad, India",
+      "work_mode": null,
+      "start_date": "2024-06",
+      "end_date": "2025-07",
+      "context_line": "B2C eSIM telecom + travel-services product",
+      "bullets": [
+        "Owned mobile development of ZetSIM, the company's flagship consumer eSIM + travel-services product.",
+        "Optimized the cart system by improving CRUD operations and reducing API call overhead by 35%, resulting in significantly faster checkout performance.",
+        "Implemented multi-currency support across the entire app (plans, packages, cart, checkout) with location-based currency auto-detection — enhancing personalization and conversion.",
+        "Delivered end-to-end data roaming functionality via native platform channels (Android/iOS) and resolved critical issues in the ZetCoins loyalty system, enabling real-time alerts and reliable reward redemption.",
+        "Supported Android eSIM installation via platform channels, expanding compatibility across major device variants and improving activation rates in key markets.",
+        "Mentored two junior developers; collaborated closely with QA and backend teams to resolve high-priority bugs and regressions.",
+        "Optimized API integration and state management using flutter_bloc, reducing latency and improving screen-to-screen performance consistency."
+      ]
+    },
+    {
+      "id": "tynybay-mobile",
+      "company": "Tynybay Inc",
+      "title": "Mobile Application Developer",
+      "location": "Hyderabad, India",
+      "work_mode": null,
+      "start_date": "2021-08",
+      "end_date": "2024-05",
+      "context_line": "Shipped 6 production Flutter applications across US, UAE/KSA, and education domains",
+      "bullets": [
+        "Lead engineer on SplitEV and SuperConstruct; co-led Falek Tayyeb; solo-built InspireABA.",
+        "Acted as SCRUM Master across multiple deliveries (sprint planning, daily standups, Asana coordination); contributed to CI/CD setup and onboarded/trained new team members.",
+        "Implemented authentication across products including third-party logins (Google, Facebook, Apple), profile management, and secure session handling.",
+        "Owned client interactions and requirements gathering directly with US and UAE/KSA stakeholders.",
+        "Cut production crash rate roughly in half on a flagship app via Firebase Crashlytics-driven debugging and targeted refactoring."
+      ]
+    }
+  ]
+}

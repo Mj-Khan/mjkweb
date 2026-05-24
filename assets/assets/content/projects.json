@@ -1,0 +1,350 @@
+{
+  "projects": [
+    {
+      "id": "svarupa",
+      "name": "Svarupa",
+      "tagline": "Multilingual Vedic Scripture Platform",
+      "featured": true,
+      "company": "Soulax Software",
+      "client": null,
+      "start_date": "2025-07",
+      "end_date": "Present",
+      "status": "live",
+      "short_description": "A Vedic scripture app with audio recitation, cross-corpus search, and a tap-any-word linguistic toolbox spanning 19 languages.",
+      "long_description": "Svarupa is a scripture platform for Vedic scholars who don't all share a common language. The text itself, the audio recitations, and the linguistic analysis around each word are usually scattered across multiple physical books and fragmented digital resources. The app pulls all of that into one place. There's a tree-based scripture browser, audio recitations of the texts, and a global search that works across the entire corpus.\n\nThe standout feature is the Toolbox. Tap any word in the scripture text and a bottom sheet comes up with morphology, translations, sandhi, and svara across 19 languages, all fetched live from REST APIs. It sounds simple as a sentence, but the UX of making 19-language linguistic data legible on a mobile screen is the actual hard part. There's also a scheduled auto-recitation feature so scholars can have texts played back at set times, and metadata displays for Devata, Rishi, and Chanda woven into the reading view.\n\nThe app had been in development for over two years before I took it over. After team transitions I now effectively own development, maintenance, and release management — roughly 85% — with the company-wide Team Lead providing high-level oversight for the remaining 15%.",
+      "problem_solved": "Vedic scripture study normally requires multiple physical books and fragmented resources across different languages. Svarupa pulls scripture text, audio recitation, and multilingual linguistic analysis into a single mobile interface for a global scholar audience.",
+      "role_summary": "Effectively owns development, maintenance, and release management (~85%) after team transitions, with the company-wide Team Lead providing high-level oversight.",
+      "contribution_bullets": [
+        "Built the tap-any-word Toolbox surfacing morphology, translations, sandhi, and svara across 19 languages via REST APIs.",
+        "Shipped the Match Found cross-corpus search feature.",
+        "Built the scheduled auto-recitation feature using native platform channels for audio playback and notification scheduling.",
+        "Implemented Devata, Rishi, and Chanda metadata display within the reading view.",
+        "Led extensive UI/UX revamps including the audio interface.",
+        "Owns release management and ongoing maintenance for the platform."
+      ],
+      "tech_stack": ["Flutter", "Native Platform Channels", "REST APIs"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=com.app.svarupa" }
+      ],
+      "store_metadata": {
+        "rating": 5.0,
+        "review_count": 12,
+        "downloads_label": "100+",
+        "last_updated": "2026-04",
+        "developer": "Soulax Software"
+      },
+      "tags": ["cultural", "consumer"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "trailer-analytics",
+      "name": "Trailer Analytics",
+      "tagline": "Enterprise Warehouse Trailer-Tracking Platform",
+      "featured": false,
+      "company": "Soulax Software",
+      "client": null,
+      "start_date": "2025-07",
+      "end_date": "Present",
+      "status": "internal",
+      "short_description": "Enterprise warehouse trailer-tracking app for trailer lifecycle, load status, and pallet scanning across warehouse operations.",
+      "long_description": "Trailer Analytics is an enterprise warehouse logistics platform that tracks trailer movement, load status, and pallet scanning inside warehouse operations. Unlike most logistics apps it isn't map-based. Location is expressed in text — warehouse names, block references, dock positions — because that's how the operations teams on the ground actually reference things.\n\nI owned Phase 1 of this end-to-end. That meant login, the whole UI/UX, REST API integration with the backend, and the barcode and pallet scanning flows that drive the data capture. The goal was to replace manual tracking with structured, real-time visibility into what's moving where.\n\nThis one is enterprise-internal, so there's no public release.",
+      "problem_solved": "Manual tracking of trailers and load status across warehouse operations is error-prone and slow. The app provides structured, real-time visibility into trailer lifecycle and pallet movement.",
+      "role_summary": "Owned Phase 1 end-to-end: login, UI/UX, REST API integration, and barcode/pallet scanning.",
+      "contribution_bullets": [
+        "Built login and authentication flow.",
+        "Owned UI/UX design and implementation for Phase 1.",
+        "Integrated REST APIs end-to-end with the backend.",
+        "Implemented barcode and pallet scanning for warehouse data capture."
+      ],
+      "tech_stack": ["Flutter"],
+      "links": [],
+      "store_metadata": null,
+      "tags": ["logistics", "enterprise", "b2b"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "vhub-inspection",
+      "name": "vHUB Inspection",
+      "tagline": "Fleet & Asset Inspection App",
+      "featured": false,
+      "company": "Soulax Software",
+      "client": "Finloc 2000 Inc",
+      "start_date": "2025-07",
+      "end_date": "Present",
+      "status": "live",
+      "short_description": "Customizable fleet and asset inspection app for a Canadian fleet leasing firm, used for trailer inspections and inspection workflow management.",
+      "long_description": "vHUB Inspection is a customizable fleet and asset inspection app built for Finloc 2000, a Canadian fleet leasing and management firm. It's used for trailer inspections, asset condition tracking, and managing the inspection workflow itself — replacing paper-based and fragmented processes with structured data capture and reporting.\n\nMy work on this has been maintenance-heavy rather than greenfield. I resolved 18+ production bugs across the codebase. I also shipped one new feature: a Google Places API-powered address search for the trailer inspection workflow, so inspectors can pull accurate location data without manually typing addresses.",
+      "problem_solved": "Paper-based and fragmented inspection workflows are slow and error-prone for fleet and asset managers. The app digitizes them and provides structured data capture and reporting.",
+      "role_summary": "Maintenance lead — resolved 18+ production bugs and shipped one new feature (Google Places API address search).",
+      "contribution_bullets": [
+        "Resolved 18+ production bugs across the codebase.",
+        "Shipped Google Places API-powered address search for the trailer inspection workflow."
+      ],
+      "tech_stack": ["Flutter", "Google Places API"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=com.vhub.interchange" }
+      ],
+      "store_metadata": {
+        "rating": null,
+        "review_count": null,
+        "downloads_label": "10+",
+        "last_updated": null,
+        "developer": "Finloc 2000 Inc"
+      },
+      "tags": ["logistics", "enterprise", "b2b"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "zetsim",
+      "name": "ZetSIM",
+      "tagline": "Global eSIM + Travel Concierge App",
+      "featured": true,
+      "company": "Zetexa Global",
+      "client": null,
+      "start_date": "2024-06",
+      "end_date": "2025-07",
+      "status": "live",
+      "short_description": "Consumer travel app that combines global eSIM data plans with bookable airport services like lounge access, fast-track security, and meet-and-greet.",
+      "long_description": "ZetSIM is two products living inside one app. The first is an eSIM store — users buy international data plans and activate them instantly without dealing with physical SIM cards or roaming charges. The second is a travel concierge layer, where the same user can book airport lounge access, fast-track security, and meet-and-greet services in the cities they're flying through. The bet is that anyone buying global data is also someone who'd pay to skip an airport queue.\n\nThe engineering work I'm proudest of on this one is the multi-currency system. Plans, packages, cart, and checkout all needed to show prices in the user's local currency, and we wanted location-based auto-detection so the user didn't have to pick anything manually. Getting that consistent across every screen, plus making sure the cart math held up across currency switches, was the tricky part. On top of that I optimized the cart's CRUD operations and brought API call overhead down by 35%, which made checkout noticeably faster.\n\nThe other big piece was native platform channels. Data roaming activation and Android eSIM installation both required dropping out of Dart into native Android and iOS code. I owned that end-to-end, and the work expanded compatibility across major device variants which directly improved activation rates in our key markets. I also fixed critical issues in the ZetCoins loyalty system so real-time alerts and reward redemption actually worked. Started under senior guidance and later led a mobile team of 3.",
+      "problem_solved": "International travelers deal with the friction of physical SIMs, roaming charges, and separately booking airport services. ZetSIM combines instant eSIM activation and pre-bookable airport conveniences into one experience.",
+      "role_summary": "Initially worked under senior guidance, later led a mobile team of 3 developers. Owned cart optimization, multi-currency, ZetCoins, and native platform channel work for data roaming and eSIM installation.",
+      "contribution_bullets": [
+        "Optimized cart CRUD operations and reduced API call overhead by 35%, significantly improving checkout speed.",
+        "Implemented multi-currency support across plans, packages, cart, and checkout with location-based auto-detection.",
+        "Delivered end-to-end data roaming functionality via native platform channels (Android/iOS).",
+        "Supported Android eSIM installation via platform channels, expanding device compatibility and activation rates.",
+        "Fixed critical issues in the ZetCoins loyalty system enabling real-time alerts and reliable reward redemption.",
+        "Optimized state management with flutter_bloc, reducing latency and improving screen-to-screen performance.",
+        "Mentored two junior developers and led a mobile team of 3."
+      ],
+      "tech_stack": ["Flutter", "BLoC", "Firebase", "Sentry", "Razorpay", "PayPal", "Stripe", "Native Platform Channels"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=com.zetexa.zet_b2c" }
+      ],
+      "store_metadata": {
+        "rating": 4.4,
+        "review_count": 385,
+        "downloads_label": "180+ countries",
+        "last_updated": "2026-04",
+        "developer": "Zetexa Global"
+      },
+      "tags": ["telecom", "consumer", "travel"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "split-ev",
+      "name": "SplitEV",
+      "tagline": "Two-Sided EV Charging Marketplace",
+      "featured": true,
+      "company": "Tynybay Inc",
+      "client": "SplitEV Inc",
+      "start_date": "2021-08",
+      "end_date": "2024-05",
+      "status": "live",
+      "short_description": "Subscription-based app connecting EV drivers with nearby charging stations and letting users list their own chargers for commercial use.",
+      "long_description": "SplitEV is a two-sided marketplace for EV charging. On one side you've got drivers looking for available chargers near them, with a map-based interface, in-app navigation, real-time pricing, and live charger discovery. On the other side you've got charger owners — people with home or commercial chargers — who list their hardware and monetize it. The app handles both personas, plus a fleet flow, inside a single Flutter codebase.\n\nThe interesting integration is the Smartcar SDK piece. Once a driver connects their car, the app pulls live vehicle telemetry: battery state of charge, lock state, and other car metrics. That data feeds into the charging UX so drivers see real range and battery context rather than guessing. The state architecture for this was non-trivial because subscription tiers, loyalty rewards, and reservation flows all interact, and BLoC handled the orchestration cleanly.\n\nPayments run through Stripe, both for driver subscriptions and for host payouts on the charger-owner side. I led a mobile team of 4 and coordinated remotely with a US-based product team in Clifton, NJ. The product goal is straightforward — reduce range anxiety by making charging infrastructure more discoverable, and give charger owners a real way to monetize underused hardware.",
+      "problem_solved": "EV range anxiety is driven by lack of visibility into nearby charging options and pricing. At the same time, private charger owners have no easy way to monetize their hardware. SplitEV solves both sides of that gap in a single marketplace.",
+      "role_summary": "Led a mobile team of 4 developers. Delivered driver, host, and fleet personas in one Flutter codebase, and coordinated remotely with the US-based product team.",
+      "contribution_bullets": [
+        "Designed BLoC-driven state architecture spanning subscription tiers, loyalty rewards, and reservation flows.",
+        "Delivered driver, host, and fleet personas in a single Flutter codebase.",
+        "Integrated Smartcar SDK for live vehicle telemetry (battery, lock state, car metrics).",
+        "Integrated Google Maps SDK for the map-based charger discovery and navigation UX.",
+        "Integrated Stripe for driver subscriptions and host payouts.",
+        "Coordinated remotely with the US-based product team in Clifton, NJ."
+      ],
+      "tech_stack": ["Flutter", "BLoC", "Google Maps SDK", "Smartcar SDK", "Stripe", "Firebase", "Firebase Crashlytics"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=co.splitev.mobile.app" }
+      ],
+      "store_metadata": {
+        "rating": null,
+        "review_count": null,
+        "downloads_label": "1+",
+        "last_updated": "2026-03",
+        "developer": "SplitEV Inc"
+      },
+      "tags": ["marketplace", "consumer", "b2b"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "super-construct",
+      "name": "SuperConstruct",
+      "tagline": "Construction Management & AIA-Style Invoicing Platform",
+      "featured": true,
+      "company": "Tynybay Inc",
+      "client": "SuperConstruct LLC",
+      "start_date": "2021-08",
+      "end_date": "2024-05",
+      "status": "live",
+      "short_description": "Construction management platform with AIA-style pay applications, project management, RFIs, daily logs, and document management across mobile and web.",
+      "long_description": "SuperConstruct is enterprise SaaS for construction. The financial side is the heart of it — AIA-style G702/G703 pay applications, Schedule of Values tracking, change orders, lien waivers, and full payment processing. If you've worked in US commercial construction you know how much of this still runs on spreadsheets and emails, and the whole point of the platform is to replace that mess with one place where contractors, owners, and project teams can actually see what's happening.\n\nThe project management surface is just as deep. Daily logs with text, photo, and video capture. RFIs. Document management. Inspections. Submittals. Dashboards. Vendor management. Team communication. All of it ties back to the same project records the financial workflows are running on, so a daily log entry can reference the pay app it relates to.\n\nI co-built the mobile delivery alongside the same Flutter team I worked with on Falek Tayyeb. The AIA-style invoicing flows were the part where the engineering had to be exact, because pay app math and signature workflows can't drift even slightly. State management ran on GetX across the whole codebase, with Firebase handling push notifications and crash reporting.",
+      "problem_solved": "Construction project management and financials are usually fragmented across spreadsheets, emails, and manual tracking — slowing payment cycles and creating coordination gaps between contractors, owners, and project teams. SuperConstruct centralizes both into one platform.",
+      "role_summary": "Co-built mobile delivery alongside the same mobile team as Falek Tayyeb.",
+      "contribution_bullets": [
+        "Shipped AIA-style G702/G703 pay application and invoicing flows.",
+        "Built daily logs with text, photo, and video capture.",
+        "Built RFIs (Requests for Information) module.",
+        "Built document management module.",
+        "Built inspections and submittals flows.",
+        "Built project dashboards."
+      ],
+      "tech_stack": ["Flutter", "GetX", "Firebase", "Firebase Crashlytics"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=com.superconstruct.sc" }
+      ],
+      "store_metadata": {
+        "rating": 5.0,
+        "review_count": 12,
+        "downloads_label": "50+",
+        "last_updated": "2026-05",
+        "developer": "SuperConstruct LLC"
+      },
+      "tags": ["construction", "enterprise", "b2b", "fintech"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "falek-tayyeb",
+      "name": "Falek Tayyeb",
+      "tagline": "Career Platform for Emirati & Saudi Nationals",
+      "featured": false,
+      "company": "Tynybay Inc",
+      "client": "TASC Outsourcing",
+      "start_date": "2021-08",
+      "end_date": "2024-05",
+      "status": "live",
+      "short_description": "Career platform for UAE and KSA nationals with curated job listings, skill development programs, and a professional networking community.",
+      "long_description": "Falek Tayyeb is a career platform built specifically for Emirati and Saudi nationals. Users can explore curated job listings tailored to the region, connect directly with employers, access training and skill development resources, and participate in a community-driven networking layer. The community side runs on an integrated third-party platform SDK so users can post, discuss, and engage beyond just applying to jobs.\n\nThe product gap it fills is that most general-purpose career platforms aren't built around UAE and KSA national hiring priorities. Falek Tayyeb is. We built it for TASC Outsourcing in Dubai. I co-led the mobile development alongside another mid-senior Flutter developer.",
+      "problem_solved": "There's a shortage of localized, high-quality career platforms built specifically around UAE and KSA national hiring needs. Falek Tayyeb closes the gap between regional talent and regional opportunity, with continuous skill development built in.",
+      "role_summary": "Co-led mobile development alongside another mid-senior Flutter developer. Built for TASC Outsourcing (Dubai).",
+      "contribution_bullets": [
+        "Co-led mobile development end-to-end.",
+        "Integrated third-party community platform SDK for networking and user engagement.",
+        "Built curated job listing and employer connection flows.",
+        "Built skill development and training resource modules."
+      ],
+      "tech_stack": ["Flutter", "GetX"],
+      "links": [
+        { "type": "play_store", "url": "https://play.google.com/store/apps/details?id=com.falektayyeb.ft" }
+      ],
+      "store_metadata": {
+        "rating": 4.1,
+        "review_count": 7,
+        "downloads_label": "1K+",
+        "last_updated": "2026-04",
+        "developer": "TASC Outsourcing"
+      },
+      "tags": ["career", "consumer", "b2b"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "inspire-aba",
+      "name": "InspireABA",
+      "tagline": "Mobile LMS & SaaS for AB Academy",
+      "featured": false,
+      "company": "Tynybay Inc",
+      "client": "AB Academy",
+      "start_date": "2021-08",
+      "end_date": "2024-05",
+      "status": "regional_only",
+      "short_description": "Mobile LMS for a US academy where students access mixed-format course content, track attendance and progress, and engage in a forum-style discussion module.",
+      "long_description": "InspireABA is a mobile-first LMS and SaaS platform built for AB Academy in the US. Students get course materials in whatever format the faculty pushed out — text, PDF, PPT, or video — and can track attendance, apply for leaves, and watch their academic progress against the syllabus. There's also a forum-like module where students and faculty post subject content, career guidance pieces, and subject-wise articles, with search across the whole thing.\n\nThe goal was to stop students from juggling multiple disconnected tools for learning, communication, and progress tracking. One app instead of three. I handled end-to-end mobile development independently from scratch on this one.\n\nIt's a US-only release — not available on the India Play Store.",
+      "problem_solved": "Students at the academy were dealing with separate tools for learning, communication, and academic tracking. InspireABA pulls all of that into a single mobile experience and simplifies consumption of mixed-format educational content.",
+      "role_summary": "Handled end-to-end mobile development independently from scratch.",
+      "contribution_bullets": [
+        "Built the app end-to-end as the sole mobile developer.",
+        "Implemented mixed-format content consumption (text, PDF, PPT, video).",
+        "Built attendance tracking, leave application, and syllabus progress monitoring.",
+        "Built the forum-style discussion module with subject content, career guidance posts, and searchable articles.",
+        "Integrated Firebase push notifications."
+      ],
+      "tech_stack": ["Flutter", "GetX", "Firebase"],
+      "links": [],
+      "store_metadata": null,
+      "tags": ["edtech", "consumer", "b2b"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "feet-first",
+      "name": "FeetFirst",
+      "tagline": null,
+      "featured": false,
+      "company": "Tynybay Inc",
+      "client": null,
+      "start_date": null,
+      "end_date": null,
+      "status": "details_pending",
+      "short_description": null,
+      "long_description": null,
+      "problem_solved": null,
+      "role_summary": null,
+      "contribution_bullets": [],
+      "tech_stack": [],
+      "links": [],
+      "store_metadata": null,
+      "tags": ["tynybay-era"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    },
+    {
+      "id": "magic-shake",
+      "name": "Magic Shake",
+      "tagline": null,
+      "featured": false,
+      "company": "Tynybay Inc",
+      "client": null,
+      "start_date": null,
+      "end_date": null,
+      "status": "details_pending",
+      "short_description": null,
+      "long_description": null,
+      "problem_solved": null,
+      "role_summary": null,
+      "contribution_bullets": [],
+      "tech_stack": [],
+      "links": [],
+      "store_metadata": null,
+      "tags": ["tynybay-era"],
+      "images": {
+        "hero": null,
+        "thumbnail": null,
+        "screenshots": []
+      }
+    }
+  ]
+}
