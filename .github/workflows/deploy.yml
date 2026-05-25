@@ -1,67 +1,141 @@
+# ============================================================================
+#  DEPLOY WORKFLOW — Flutter Web to GitHub Pages
+# ============================================================================
+#  WHAT THIS DOES (in plain terms):
+#  Every time you push code to the `main` branch, GitHub will automatically:
+#    1. Grab a fresh computer in the cloud
+#    2. Install Flutter on it
+#    3. Build your web app (the compiled site)
+#    4. Hand that built site directly to GitHub Pages to publish
+#
+#  There is NO gh-pages branch. The built site is uploaded as a temporary
+#  "artifact" and GitHub Pages serves it directly. You only ever work in
+#  `main`. Push to main -> site updates. That's the whole mental model.
+# ============================================================================
+
+# The human-friendly name shown in the GitHub "Actions" tab.
 name: Deploy to GitHub Pages
 
-# ── Triggers ────────────────────────────────────────────────────────────────
-# Push to main deploys automatically.
-# Manual trigger available via workflow_dispatch for testing.
+# ----------------------------------------------------------------------------
+#  TRIGGERS — what causes this workflow to run
+# ----------------------------------------------------------------------------
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches: [main]      # Run automatically on every push to the main branch.
+  workflow_dispatch:       # Also allow running it manually from the Actions tab
+                           # (a "Run workflow" button) — handy for re-deploying
+                           # without making a code change.
 
-# ── Permissions ──────────────────────────────────────────────────────────────
-# Required for the peaceiris/actions-gh-pages action to push to gh-pages branch.
+# ----------------------------------------------------------------------------
+#  PERMISSIONS — what this workflow is allowed to do
+# ----------------------------------------------------------------------------
+#  The new Pages deployment method needs these exact permissions.
+#  - pages: write    -> allowed to publish to GitHub Pages
+#  - id-token: write -> allowed to prove its identity securely to Pages
+#  - contents: read  -> allowed to read your repo's code
 permissions:
-  contents: write
+  pages: write
+  id-token: write
+  contents: read
 
+# ----------------------------------------------------------------------------
+#  CONCURRENCY — don't let two deploys fight each other
+# ----------------------------------------------------------------------------
+#  If you push twice quickly, this cancels the older in-progress deploy so
+#  only the newest one finishes. Prevents two deploys racing.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+# ----------------------------------------------------------------------------
+#  JOBS — the actual work, split into two stages: BUILD, then DEPLOY
+# ----------------------------------------------------------------------------
 jobs:
-  build_and_deploy:
-    name: Build & Deploy Flutter Web
-    runs-on: ubuntu-latest
+
+  # ==========================================================================
+  #  JOB 1: BUILD — compile the Flutter web app
+  # ==========================================================================
+  build:
+    name: Build Flutter Web
+    runs-on: ubuntu-latest      # Use a fresh Ubuntu Linux machine in the cloud.
 
     steps:
-      # 1. Check out the source code
+      # ----- Step 1: Get your code onto the build machine --------------------
+      # Downloads your repository's files so Flutter has something to build.
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      # 2. Set up Flutter (pinned to 3.41.2 for deterministic builds)
+      # ----- Step 2: Install Flutter -----------------------------------------
+      # Installs the exact Flutter version you built with locally (3.41.2),
+      # so the cloud build matches your machine. `cache: true` saves the
+      # Flutter install between runs to speed things up.
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.41.2"
+          flutter-version: '3.41.2'
           channel: stable
-          cache: true # Cache Flutter SDK between runs (~2 min savings)
+          cache: true
 
-      # 3. Install dependencies
+      # ----- Step 3: Download your project's dependencies --------------------
+      # Reads pubspec.yaml and fetches every package your app needs
+      # (flutter_animate, url_launcher, etc.).
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. Build Flutter Web
-      #    BASE HREF = "/" because this site is served from the root of
-      #    mj-khan.github.io (a user/org page repo).
-      #    ⚠️  If you ever move to a project repo (e.g. github.com/mj-khan/portfolio),
-      #         change --base-href "/" to --base-href "/portfolio/"
+      # ----- Step 4: Build the website ---------------------------------------
+      # Compiles your Dart code into a real website in the build/web folder.
+      #
+      # --base-href "/mjkweb/" is CRITICAL. Your site lives at
+      #   https://mj-khan.github.io/mjkweb/
+      # so every asset (JSON, fonts, engine) must load from the /mjkweb/
+      # sub-path. Leading AND trailing slash both required.
+      #
+      # ⚠️ IF YOU EVER RENAME THE REPO TO mj-khan.github.io (a root user page),
+      #     change this to --base-href "/"
       - name: Build Flutter Web (release)
         run: flutter build web --release --base-href "/mjkweb/"
 
-      # 5. Add .nojekyll so GitHub Pages serves Flutter's _flutter/ directory.
-      #    Without this, Pages strips any folder/file starting with underscore.
-      - name: Add .nojekyll
-        run: touch build/web/.nojekyll
-
-      # 6. Copy index.html → 404.html so that direct-URL navigation (deep links,
-      #    refreshes) falls back to the Flutter app instead of a GitHub 404 page.
+      # ----- Step 5: SPA fallback for deep links -----------------------------
+      # Copies index.html to 404.html. If someone hard-refreshes or hits a
+      # direct sub-URL, GitHub serves 404.html, which loads your app instead
+      # of a GitHub "not found" page.
       - name: Add SPA 404 fallback
         run: cp build/web/index.html build/web/404.html
 
-      # 7. Deploy build/web to the gh-pages branch.
-      #    GitHub Pages must be configured to serve from the gh-pages branch.
-      #    ⚠️  CNAME: If you add a custom domain, place a CNAME file in web/
-      #         (tracked in git) so it is included in every deployment.
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # ----- Step 6: Hand the built site to the Pages system -----------------
+      # Uploads the entire build/web folder as a Pages "artifact" — a packaged
+      # bundle that the deploy job (below) will publish. This is what replaces
+      # the old gh-pages branch: instead of committing files to a branch, the
+      # site is passed directly to Pages.
+      #
+      # NOTE: .nojekyll is not needed with this method — GitHub does not run
+      # Jekyll on artifacts, so Flutter's _flutter/ folder is served as-is.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          publish_branch: gh-pages # ← branch GitHub Pages serves from
-          # user_name: 'github-actions[bot]'
-          # user_email: 'github-actions[bot]@users.noreply.github.com'
+          path: build/web      # the folder to publish
+
+  # ==========================================================================
+  #  JOB 2: DEPLOY — publish the built site to GitHub Pages
+  # ==========================================================================
+  #  This job runs only after `build` finishes successfully (needs: build).
+  #  It takes the artifact the build job uploaded and makes it live.
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build               # Wait for the build job to succeed first.
+    runs-on: ubuntu-latest
+
+    # This block tells GitHub which "environment" is being deployed and
+    # captures the live URL so it shows up in the Actions tab after deploy.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ----- The single deploy step ------------------------------------------
+      # Takes the uploaded artifact and publishes it to GitHub Pages.
+      # The `id: deployment` lets the `environment.url` above read back the
+      # final live URL.
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
