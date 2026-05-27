@@ -8,6 +8,7 @@ import '../../core/app_spacing.dart';
 import '../../core/app_typography.dart';
 import '../../core/breakpoints.dart';
 import '../../models/project.dart';
+import 'lit_edge_card.dart';
 
 /// Accessibility-first, high-fidelity project details modal.
 class ProjectModal extends StatelessWidget {
@@ -89,15 +90,10 @@ class ProjectModal extends StatelessWidget {
             maxWidth: 880.0,
             maxHeight: screenHeight * 0.9,
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surfaceHigh, // #2a2a2a from token
-              border: Border.all(
-                color: AppColors.borderDefault,
-                width: 1.0,
-              ),
-              borderRadius: AppRadius.card,
-            ),
+          child: LitEdgeCard(
+            presence: CardPresence.featured,
+            isClickable: false,
+            padding: EdgeInsets.zero,
             child: ClipRRect(
               borderRadius: AppRadius.card,
               child: contentWidget,

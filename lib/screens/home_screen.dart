@@ -6,6 +6,7 @@ import '../core/breakpoints.dart';
 import '../data/app_data.dart';
 import '../widgets/components/desktop_nav_rail.dart';
 import '../widgets/components/mobile_top_bar.dart';
+import '../widgets/components/aurora_background.dart';
 import '../widgets/sections/hero_section.dart';
 import '../widgets/sections/work_section.dart';
 import '../widgets/sections/experience_section.dart';
@@ -135,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(decoration: AppColors.vignetteDecoration),
             ),
 
+
             // ── DESKTOP: fixed side rail ────────────────────────────────
             if (isDesktop)
               Positioned(
@@ -172,37 +174,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     constraints: const BoxConstraints(
                       maxWidth: AppSpacing.containerMaxWidth,
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile
-                            ? AppSpacing.gutterMobile
-                            : AppSpacing.gutterDesktop,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          HeroSection(
-                            key: heroKey,
-                            workKey: workKey,
-                            contactKey: contactKey,
+                    child: Stack(
+                      children: [
+                        // Aurora Background placed inside the scrollable content Stack
+                        const Positioned.fill(
+                          child: AuroraBackground(),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile
+                                ? AppSpacing.gutterMobile
+                                : AppSpacing.gutterDesktop,
                           ),
-                          WorkSection(
-                            key: workKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              HeroSection(
+                                key: heroKey,
+                                workKey: workKey,
+                                contactKey: contactKey,
+                              ),
+                              WorkSection(
+                                key: workKey,
+                              ),
+                              ExperienceSection(
+                                key: experienceKey,
+                              ),
+                              StackSection(
+                                key: stackKey,
+                              ),
+                              ContactSection(
+                                key: contactKey,
+                              ),
+                              FooterSection(
+                                key: footerKey,
+                              ),
+                            ],
                           ),
-                          ExperienceSection(
-                            key: experienceKey,
-                          ),
-                          StackSection(
-                            key: stackKey,
-                          ),
-                          ContactSection(
-                            key: contactKey,
-                          ),
-                          FooterSection(
-                            key: footerKey,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

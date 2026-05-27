@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/app_radius.dart';
@@ -6,10 +7,11 @@ import '../../core/app_spacing.dart';
 import '../../core/app_typography.dart';
 import '../../core/breakpoints.dart';
 import '../../core/icon_resolver.dart';
-import '../../core/motion.dart';
 import '../../data/app_data.dart';
 import '../../models/project.dart';
+import '../components/lit_edge_card.dart';
 import '../components/project_modal.dart';
+import '../components/scroll_reveal.dart';
 
 /// High-fidelity, fully responsive Work Section.
 /// Shows featured projects in a responsive 2x2 grid, followed by an AnimatedSize-toggled
@@ -39,22 +41,22 @@ class _WorkSectionState extends State<WorkSection> {
     final featured = appData.content.featuredProjects;
     final supporting = appData.content.supportingProjects;
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.borderDefault,
-            width: 1,
+    return ScrollReveal(
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.borderDefault,
+              width: 1,
+            ),
           ),
         ),
-      ),
-      padding: AppSpacing.sectionPadding(isMobile: isMobile),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Section Title block ───────────────────────────────────────────
-          RevealAnimation(
-            child: Column(
+        padding: AppSpacing.sectionPadding(isMobile: isMobile),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Section Title block ───────────────────────────────────────────
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -71,7 +73,6 @@ class _WorkSectionState extends State<WorkSection> {
                 ),
               ],
             ),
-          ),
           const SizedBox(height: 48),
 
           // ── Featured Projects Grid (Coordination via Hover) ───────────────
@@ -118,7 +119,8 @@ class _WorkSectionState extends State<WorkSection> {
           ],
         ],
       ),
-    );
+    ),
+  );
   }
 
   /// Builds a responsive supporting projects grid (3-col desktop, 2-col tablet, 1-col mobile)
@@ -201,21 +203,40 @@ class _FeaturedGridState extends State<FeaturedGrid> {
   Widget build(BuildContext context) {
     final isMobile = context.isMobile;
     final projects = widget.projects;
+    final disableAnimations = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
     if (isMobile) {
       // 1-column layout for mobile
       return Column(
-        children: projects
-            .map((p) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: FeaturedCard(
-                    project: p,
-                    isDimmed: false,
-                    onHoverChanged: (_) {},
-                    onTap: () => widget.onProjectTap(p),
-                  ),
-                ))
-            .toList(),
+        children: projects.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final p = entry.value;
+          Widget card = FeaturedCard(
+            project: p,
+            isDimmed: false,
+            onHoverChanged: (_) {},
+            onTap: () => widget.onProjectTap(p),
+          );
+
+          if (!disableAnimations) {
+            card = card.animate(
+              delay: Duration(milliseconds: idx * 80),
+            ).fadeIn(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutCubic,
+            ).slideY(
+              begin: 0.05,
+              end: 0.0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutCubic,
+            );
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: card,
+          );
+        }).toList(),
       );
     }
 
@@ -224,22 +245,39 @@ class _FeaturedGridState extends State<FeaturedGrid> {
     for (var i = 0; i < projects.length; i += 2) {
       final rowItems = <Widget>[];
       for (var j = 0; j < 2; j++) {
-        if (i + j < projects.length) {
-          final p = projects[i + j];
+        final idx = i + j;
+        if (idx < projects.length) {
+          final p = projects[idx];
           final isDimmed = _hoveredProjectId != null && _hoveredProjectId != p.id;
+
+          Widget card = FeaturedCard(
+            project: p,
+            isDimmed: isDimmed,
+            onHoverChanged: (hovered) {
+              setState(() {
+                _hoveredProjectId = hovered ? p.id : null;
+              });
+            },
+            onTap: () => widget.onProjectTap(p),
+          );
+
+          if (!disableAnimations) {
+            card = card.animate(
+              delay: Duration(milliseconds: idx * 80),
+            ).fadeIn(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutCubic,
+            ).slideY(
+              begin: 0.05,
+              end: 0.0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutCubic,
+            );
+          }
 
           rowItems.add(
             Expanded(
-              child: FeaturedCard(
-                project: p,
-                isDimmed: isDimmed,
-                onHoverChanged: (hovered) {
-                  setState(() {
-                    _hoveredProjectId = hovered ? p.id : null;
-                  });
-                },
-                onTap: () => widget.onProjectTap(p),
-              ),
+              child: card,
             ),
           );
         } else {
@@ -343,9 +381,6 @@ class _FeaturedCardState extends State<FeaturedCard> {
     // Dim other projects in grid on hover to 80% opacity
     final double finalOpacity = widget.isDimmed ? baseOpacity * 0.8 : baseOpacity;
 
-    // Hover translate (2px lift) and border transition
-    final offset = _isHovered && isClickable ? const Offset(0, -2.0) : Offset.zero;
-    final borderColor = _isHovered && isClickable ? AppColors.accent : AppColors.borderDefault;
 
     // Find icon
     final iconName = appData.siteConfig.projectIconMap[project.id] ?? 'circle_outlined';
@@ -360,15 +395,17 @@ class _FeaturedCardState extends State<FeaturedCard> {
     }
     final metaText = metaParts.join('  •  ');
 
+    final isDesktop = context.isDesktop;
+
     return MouseRegion(
       onEnter: (_) {
-        if (isClickable) {
+        if (isClickable && isDesktop) {
           setState(() => _isHovered = true);
           widget.onHoverChanged(true);
         }
       },
       onExit: (_) {
-        if (isClickable) {
+        if (isClickable && isDesktop) {
           setState(() => _isHovered = false);
           widget.onHoverChanged(false);
         }
@@ -378,19 +415,13 @@ class _FeaturedCardState extends State<FeaturedCard> {
         onTap: isClickable ? widget.onTap : null,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           opacity: finalOpacity,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            transform: Matrix4.translationValues(0, offset.dy, 0),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border.all(
-                color: borderColor,
-                width: 1.0,
-              ),
-              borderRadius: AppRadius.card,
-            ),
+          child: LitEdgeCard(
             padding: AppSpacing.cardPadding(isMobile: isMobile),
+            presence: CardPresence.featured,
+            isHovered: _isHovered,
+            isClickable: isClickable,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -528,38 +559,30 @@ class _SupportingCardState extends State<SupportingCard> {
     final double baseOpacity = isClickable ? 1.0 : 0.6;
     final double finalOpacity = _isHovered && isClickable ? 1.0 : baseOpacity;
 
-    // Hover translate (2px lift) and border transition
-    final offset = _isHovered && isClickable ? const Offset(0, -2.0) : Offset.zero;
-    final borderColor = _isHovered && isClickable ? AppColors.accent : AppColors.borderDefault;
 
     // Context hint from metadata - client, company, or status
     final contextHint = project.client ?? project.company ?? project.status.replaceAll('_', ' ');
 
+    final isDesktop = context.isDesktop;
+
     return MouseRegion(
       onEnter: (_) {
-        if (isClickable) setState(() => _isHovered = true);
+        if (isClickable && isDesktop) setState(() => _isHovered = true);
       },
       onExit: (_) {
-        if (isClickable) setState(() => _isHovered = false);
+        if (isClickable && isDesktop) setState(() => _isHovered = false);
       },
       cursor: isClickable ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
       child: GestureDetector(
         onTap: isClickable ? widget.onTap : null,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           opacity: finalOpacity,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            transform: Matrix4.translationValues(0, offset.dy, 0),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border.all(
-                color: borderColor,
-                width: 1.0,
-              ),
-              borderRadius: AppRadius.card,
-            ),
-            padding: const EdgeInsets.all(20.0), // Compact padding
+          child: LitEdgeCard(
+            padding: const EdgeInsets.all(20.0),
+            isHovered: _isHovered,
+            isClickable: isClickable,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -682,14 +705,16 @@ class _GhostToggleCTAState extends State<GhostToggleCTA> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktop;
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
+      onEnter: (_) => setState(() => _isHovered = isDesktop),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.transparent,

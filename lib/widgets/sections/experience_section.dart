@@ -8,10 +8,12 @@ import '../../core/breakpoints.dart';
 import '../../core/motion.dart';
 import '../../data/app_data.dart';
 import '../../models/experience.dart';
+import '../components/lit_edge_card.dart';
+import '../components/scroll_reveal.dart';
 
 /// High-fidelity, fully responsive Experience Section.
-/// Shows stacked professional experience roles with dynamic expand/collapse toggles
-/// and hover state transformations.
+/// Shows stacked professional experience roles with a timeline rail on desktop,
+/// dynamic expand/collapse toggles, and lit-edge cards.
 class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
 
@@ -22,22 +24,22 @@ class ExperienceSection extends StatelessWidget {
     final isMobile = context.isMobile;
     final roles = appData.content.experience;
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.borderDefault,
-            width: 1,
+    return ScrollReveal(
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.borderDefault,
+              width: 1,
+            ),
           ),
         ),
-      ),
-      padding: AppSpacing.sectionPadding(isMobile: isMobile),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Section Title ─────────────────────────────────────────────────
-          RevealAnimation(
-            child: Column(
+        padding: AppSpacing.sectionPadding(isMobile: isMobile),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Section Title ─────────────────────────────────────────────────
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -54,19 +56,117 @@ class ExperienceSection extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 48),
+            const SizedBox(height: 48),
 
-          // ── Stacked Experience Cards ──────────────────────────────────────
-          StaggeredRevealList(
-            initialDelay: Duration.zero,
-            interval: const Duration(milliseconds: 40),
-            children: roles.map((role) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: ExperienceCard(role: role),
-              );
-            }).toList(),
+            // ── Stacked Experience Cards ──────────────────────────────────────
+            StaggeredRevealList(
+              initialDelay: Duration.zero,
+              interval: const Duration(milliseconds: 40),
+              children: List.generate(roles.length, (idx) {
+                final role = roles[idx];
+                final card = ExperienceCard(
+                  role: role,
+                  isTimelineMode: !isMobile,
+                );
+
+                if (isMobile) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: card,
+                  );
+                }
+
+                return DesktopTimelineRow(
+                  card: card,
+                  dateText: '${role.startDate} — ${role.endDate ?? "Present"}',
+                  isCurrent: role.isPresent,
+                  isFirst: idx == 0,
+                  isLast: idx == roles.length - 1,
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A desktop vertical timeline row separating date column, rail with dot, and card.
+class DesktopTimelineRow extends StatelessWidget {
+  final Widget card;
+  final String dateText;
+  final bool isCurrent;
+  final bool isFirst;
+  final bool isLast;
+
+  const DesktopTimelineRow({
+    super.key,
+    required this.card,
+    required this.dateText,
+    required this.isCurrent,
+    required this.isFirst,
+    required this.isLast,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Aligns the dot vertically with the first line of card content (header text)
+    const double dotTopOffset = 38.0;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 1. Date column (fixed 140px)
+          SizedBox(
+            width: 140,
+            child: Padding(
+              padding: const EdgeInsets.only(top: dotTopOffset - 6.0, right: 20.0),
+              child: Text(
+                dateText.toUpperCase(),
+                textAlign: TextAlign.right,
+                style: AppTypography.monoLabel.copyWith(
+                  fontSize: 10,
+                  color: isCurrent ? AppColors.accent : AppColors.foregroundSubtle,
+                  letterSpacing: 1.0,
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+
+          // 2. Timeline rail column (fixed 40px)
+          SizedBox(
+            width: 40,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                // Thin dark emerald vertical line segment (#2E3D35)
+                Positioned(
+                  top: isFirst ? dotTopOffset : 0,
+                  bottom: isLast ? null : 0,
+                  height: isLast ? dotTopOffset : null,
+                  width: 1.5,
+                  child: Container(
+                    color: AppColors.accentSurfaceLow,
+                  ),
+                ),
+                // Timeline marker dot
+                Positioned(
+                  top: dotTopOffset - 8.0,
+                  child: TimelineDot(isCurrent: isCurrent),
+                ),
+              ],
+            ),
+          ),
+
+          // 3. Card column (flexible)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: card,
+            ),
           ),
         ],
       ),
@@ -74,13 +174,140 @@ class ExperienceSection extends StatelessWidget {
   }
 }
 
+/// A timeline dot that pulses and glows for the current/live position.
+class TimelineDot extends StatefulWidget {
+  final bool isCurrent;
+
+  const TimelineDot({
+    super.key,
+    required this.isCurrent,
+  });
+
+  @override
+  State<TimelineDot> createState() => _TimelineDotState();
+}
+
+class _TimelineDotState extends State<TimelineDot> with SingleTickerProviderStateMixin {
+  AnimationController? _pulseController;
+  Animation<double>? _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isCurrent) {
+      _pulseController = AnimationController(
+        vsync: this,
+        duration: const Duration(seconds: 2),
+      );
+      _pulseAnimation = Tween<double>(begin: 0.85, end: 1.15).animate(
+        CurvedAnimation(
+          parent: _pulseController!,
+          curve: Curves.easeInOut,
+        ),
+      );
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_pulseController != null) {
+      final disableAnimations = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+      if (disableAnimations) {
+        _pulseController!.stop();
+        _pulseController!.value = 0.5;
+      } else if (!_pulseController!.isAnimating) {
+        _pulseController!.repeat(reverse: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.isCurrent) {
+      // Dim older role marker
+      return Container(
+        width: 8,
+        height: 8,
+        decoration: const BoxDecoration(
+          color: AppColors.accentSurfaceMid,
+          shape: BoxShape.circle,
+        ),
+      );
+    }
+
+    final disableAnimations = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+
+    // Glowing bright live dot
+    final dotWidget = Container(
+      width: 10,
+      height: 10,
+      decoration: const BoxDecoration(
+        color: AppColors.accent,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent,
+            blurRadius: 4,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+    );
+
+    // Pulse halo glow
+    final glowWidget = Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        color: AppColors.accent.withValues(alpha: 0.15),
+        shape: BoxShape.circle,
+      ),
+    );
+
+    if (disableAnimations) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          glowWidget,
+          dotWidget,
+        ],
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: _pulseAnimation!,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Transform.scale(
+              scale: _pulseAnimation!.value,
+              child: glowWidget,
+            ),
+            dotWidget,
+          ],
+        );
+      },
+    );
+  }
+}
+
 /// A single professional role card with rich hover states and expand/collapse triggers.
 class ExperienceCard extends StatefulWidget {
   final ExperienceRole role;
+  final bool isTimelineMode;
 
   const ExperienceCard({
     super.key,
     required this.role,
+    this.isTimelineMode = false,
   });
 
   @override
@@ -96,15 +323,18 @@ class _ExperienceCardState extends State<ExperienceCard> {
     final role = widget.role;
     final isMobile = context.isMobile;
 
-    // Hover transformations over 200ms
-    final offset = _isHovered ? const Offset(0, -2.0) : Offset.zero;
-    final borderColor = _isHovered ? AppColors.accent : AppColors.borderDefault;
+    // Hover transitions over 200ms
     final dateColor = _isHovered ? AppColors.foregroundPrimary : AppColors.foregroundSubtle;
 
-    // Date range formatting
+    // Date range formatting inside card (hidden on desktop timeline mode)
+    final showDateInCard = !widget.isTimelineMode;
     final dateText = '${role.startDate} — ${role.endDate ?? "Present"}';
     final locationText = role.location ?? '';
-    final infoString = locationText.isNotEmpty ? '$dateText  •  $locationText' : dateText;
+    final infoString = (showDateInCard && locationText.isNotEmpty)
+        ? '$dateText  •  $locationText'
+        : showDateInCard
+            ? dateText
+            : locationText;
 
     // Expand/collapse logic details
     final showToggle = !role.isPresent && role.bullets.length > 2;
@@ -116,23 +346,23 @@ class _ExperienceCardState extends State<ExperienceCard> {
     // Bullets list to render
     final visibleBullets = role.bullets.take(visibleBulletsCount).toList();
 
+    final isDesktop = context.isDesktop;
+
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        transform: Matrix4.translationValues(0, offset.dy, 0),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(
-            color: borderColor,
-            width: 1.0,
-          ),
-          borderRadius: AppRadius.card,
-        ),
+      onEnter: (_) {
+        if (isDesktop) setState(() => _isHovered = true);
+      },
+      onExit: (_) {
+        if (isDesktop) setState(() => _isHovered = false);
+      },
+      child: LitEdgeCard(
         padding: const EdgeInsets.all(28.0), // authoritative 28px padding
+        isHovered: _isHovered,
+        isActive: role.isPresent,
+        isClickable: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // ── Header (Desktop 1-row / Mobile stacked) ──────────────────────
             if (!isMobile)
@@ -175,14 +405,16 @@ class _ExperienceCardState extends State<ExperienceCard> {
                     ),
                   ),
                   const SizedBox(width: 24),
-                  // Right side: Dates & Location (intensifies on hover)
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    style: AppTypography.monoMeta.copyWith(
-                      color: dateColor,
+                  // Right side: Location (intensifies on hover)
+                  if (infoString.isNotEmpty)
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      style: AppTypography.monoMeta.copyWith(
+                        color: dateColor,
+                      ),
+                      child: Text(infoString),
                     ),
-                    child: Text(infoString),
-                  ),
                 ],
               )
             else
@@ -214,14 +446,16 @@ class _ExperienceCardState extends State<ExperienceCard> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    style: AppTypography.monoMeta.copyWith(
-                      color: dateColor,
-                      fontSize: 12.0,
+                  if (infoString.isNotEmpty)
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      style: AppTypography.monoMeta.copyWith(
+                        color: dateColor,
+                        fontSize: 12.0,
+                      ),
+                      child: Text(infoString),
                     ),
-                    child: Text(infoString),
-                  ),
                 ],
               ),
             const SizedBox(height: 16),
@@ -296,7 +530,9 @@ class _ExperienceCardState extends State<ExperienceCard> {
                         _isExpanded = !_isExpanded;
                       });
                     },
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(

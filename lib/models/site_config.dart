@@ -1,3 +1,18 @@
+/// A single text segment for a headline — may be gradient or plain.
+class HeadlineSegment {
+  final String text;
+  final bool gradient;
+
+  const HeadlineSegment({required this.text, required this.gradient});
+
+  factory HeadlineSegment.fromJson(Map<String, dynamic> json) {
+    return HeadlineSegment(
+      text: json['text'] as String? ?? '',
+      gradient: json['gradient'] as bool? ?? false,
+    );
+  }
+}
+
 /// Hero metric — { "value": "05", "label": "YEARS BUILDING FLUTTER" }
 class HeroMetric {
   final String value;
@@ -38,6 +53,8 @@ class HeroConfig {
   final List<String> avatarCode;
   final HeroCta ctaPrimary;
   final HeroCta ctaSecondary;
+  /// Selective gradient segments. When non-empty, overrides plain [headline] rendering.
+  final List<HeadlineSegment> headlineSegments;
 
   const HeroConfig({
     required this.avatarFilename,
@@ -48,6 +65,7 @@ class HeroConfig {
     required this.avatarCode,
     required this.ctaPrimary,
     required this.ctaSecondary,
+    this.headlineSegments = const [],
   });
 
   factory HeroConfig.fromJson(Map<String, dynamic> json) {
@@ -55,6 +73,7 @@ class HeroConfig {
     final rawAvatarCode = json['avatar_code'] as List<dynamic>? ?? [];
     final rawCtaPrimary = json['cta_primary'] as Map<String, dynamic>?;
     final rawCtaSecondary = json['cta_secondary'] as Map<String, dynamic>?;
+    final rawSegments = json['headline_segments'] as List<dynamic>? ?? [];
 
     return HeroConfig(
       avatarFilename: json['avatar_filename'] as String? ?? 'mjk_profile.dart',
@@ -71,6 +90,9 @@ class HeroConfig {
       ctaSecondary: rawCtaSecondary != null
           ? HeroCta.fromJson(rawCtaSecondary)
           : const HeroCta(label: 'GET IN TOUCH', target: 'contact'),
+      headlineSegments: rawSegments
+          .map((s) => HeadlineSegment.fromJson(s as Map<String, dynamic>))
+          .toList(),
     );
   }
 }
@@ -173,6 +195,8 @@ class ContactConfig extends SectionConfig {
   final String successPrimary;
   final String successSecondary;
   final String directNote;
+  /// Selective gradient segments. When non-empty, overrides plain [heading] rendering.
+  final List<HeadlineSegment> headingSegments;
 
   const ContactConfig({
     required super.heading,
@@ -182,11 +206,13 @@ class ContactConfig extends SectionConfig {
     required this.successPrimary,
     required this.successSecondary,
     required this.directNote,
+    this.headingSegments = const [],
   });
 
   factory ContactConfig.fromJson(Map<String, dynamic> json) {
     final rawFormFields =
         json['form_fields'] as Map<String, dynamic>?;
+    final rawSegments = json['heading_segments'] as List<dynamic>? ?? [];
     return ContactConfig(
       heading: json['heading'] as String? ?? "Let's build something.",
       subLine: json['sub_line'] as String? ?? '',
@@ -202,6 +228,9 @@ class ContactConfig extends SectionConfig {
       successPrimary: json['success_primary'] as String? ?? '',
       successSecondary: json['success_secondary'] as String? ?? '',
       directNote: json['direct_note'] as String? ?? '',
+      headingSegments: rawSegments
+          .map((s) => HeadlineSegment.fromJson(s as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

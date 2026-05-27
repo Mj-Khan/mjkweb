@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
-import '../../core/app_radius.dart';
 import '../../core/app_typography.dart';
 import '../../data/app_data.dart';
+import 'lit_edge_card.dart';
 
 /// The high-fidelity "/ now" module card.
 /// Displays what the developer is currently up to, based on site_config.now values.
@@ -18,16 +18,9 @@ class NowWidget extends StatelessWidget {
     // Reading fallback for null values
     final readingValue = nowConfig.reading ?? '—';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(
-          color: AppColors.borderDefault,
-          width: 1,
-        ),
-        borderRadius: AppRadius.card,
-      ),
+    return LitEdgeCard(
       padding: const EdgeInsets.all(24.0),
+      isClickable: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

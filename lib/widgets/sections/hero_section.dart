@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/app_radius.dart';
 import '../../core/app_spacing.dart';
 import '../../core/app_typography.dart';
 import '../../core/breakpoints.dart';
-import '../../core/motion.dart';
 import '../../data/app_data.dart';
 import '../../models/site_config.dart';
+import '../components/gradient_text.dart';
+import '../components/segmented_headline.dart';
 
 /// The high-fidelity, fully responsive Hero Section.
 /// Renders as asymmetric 2-column on desktop/tablet, and single column on mobile.
@@ -65,118 +67,146 @@ class HeroSection extends StatelessWidget {
       color: AppColors.foregroundPrimary,
     );
 
-    // Left Column content (stacked sequentially for animations)
-    final leftColumnWidgets = [
-      // Eyebrow with custom blinking cursor
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            cleanEyebrow.toUpperCase(),
-            style: AppTypography.monoLabel.copyWith(
-              color: AppColors.accent,
-            ),
+    final eyebrowWidget = Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          cleanEyebrow.toUpperCase(),
+          style: AppTypography.monoLabel.copyWith(
+            color: AppColors.accent,
           ),
-          const SizedBox(width: 6),
-          const BlinkingCursor(),
-        ],
-      ),
-      const SizedBox(height: 16),
-      // Scaling Headline
-      Text(
+        ),
+        const SizedBox(width: 6),
+        const BlinkingCursor(),
+      ],
+    );
+
+    // Headline: selective segments or full gradient fallback
+    final Widget headlineWidget;
+    if (heroConfig.headlineSegments.isNotEmpty) {
+      headlineWidget = SegmentedHeadline(
+        segments: heroConfig.headlineSegments,
+        style: headlineStyle,
+        fallbackText: heroConfig.headline,
+        maxGradientWidth: 480.0,
+      );
+    } else {
+      headlineWidget = GradientText(
         heroConfig.headline,
         style: headlineStyle,
-      ),
-      const SizedBox(height: 24),
-      // Sub-headline / bio
-      Text(
-        heroConfig.subHeadline,
-        style: AppTypography.withColor(
-          AppTypography.bodyLarge,
-          AppColors.foregroundMuted,
-        ),
-      ),
-      const SizedBox(height: 40),
-      // CTAs
-      Wrap(
-        spacing: 16,
-        runSpacing: 16,
-        children: [
-          PrimaryCTA(
-            label: heroConfig.ctaPrimary.label,
-            onTap: () => _scrollToSection(workKey),
-          ),
-          GhostCTA(
-            label: heroConfig.ctaSecondary.label,
-            onTap: () => _scrollToSection(contactKey),
-          ),
-        ],
-      ),
-      const SizedBox(height: 48),
-      // Metrics Layout
-      if (!isMobile)
-        // Desktop/Tablet Row with vertical 1px hairlines
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: _MetricItem(metric: heroConfig.metrics[0])),
-            Container(
-              width: 1,
-              height: 48,
-              color: AppColors.borderDefault,
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-            ),
-            Expanded(child: _MetricItem(metric: heroConfig.metrics[1])),
-            Container(
-              width: 1,
-              height: 48,
-              color: AppColors.borderDefault,
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-            ),
-            Expanded(child: _MetricItem(metric: heroConfig.metrics[2])),
-          ],
-        )
-      else
-        // Mobile Column with horizontal hairline dividers
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _MetricItem(metric: heroConfig.metrics[0]),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Divider(color: AppColors.borderDefault, thickness: 1, height: 1),
-            ),
-            _MetricItem(metric: heroConfig.metrics[1]),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Divider(color: AppColors.borderDefault, thickness: 1, height: 1),
-            ),
-            _MetricItem(metric: heroConfig.metrics[2]),
+        maxGradientWidth: 650.0,
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.accent,
+            AppColors.accentSecondary,
           ],
         ),
-    ];
+      );
+    }
 
-    // Build responsive body
+    final subHeadlineWidget = Text(
+      heroConfig.subHeadline,
+      style: AppTypography.withColor(
+        AppTypography.bodyLarge,
+        AppColors.foregroundMuted,
+      ),
+    );
+
+    final ctasWidget = Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        PrimaryCTA(
+          label: heroConfig.ctaPrimary.label,
+          onTap: () => _scrollToSection(workKey),
+        ),
+        GhostCTA(
+          label: heroConfig.ctaSecondary.label,
+          onTap: () => _scrollToSection(contactKey),
+        ),
+      ],
+    );
+
+    final metricsWidget = isMobile
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _MetricItem(metric: heroConfig.metrics[0]),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Divider(color: AppColors.borderDefault, thickness: 1, height: 1),
+              ),
+              _MetricItem(metric: heroConfig.metrics[1]),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Divider(color: AppColors.borderDefault, thickness: 1, height: 1),
+              ),
+              _MetricItem(metric: heroConfig.metrics[2]),
+            ],
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: _MetricItem(metric: heroConfig.metrics[0])),
+              Container(
+                width: 1,
+                height: 48,
+                color: AppColors.borderDefault,
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+              Expanded(child: _MetricItem(metric: heroConfig.metrics[1])),
+              Container(
+                width: 1,
+                height: 48,
+                color: AppColors.borderDefault,
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+              Expanded(child: _MetricItem(metric: heroConfig.metrics[2])),
+            ],
+          );
+
+    final disableAnimations = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+
+    Widget buildEntrance(Widget child, int idx) {
+      if (disableAnimations) return child;
+      final delayMs = idx * 40; // 40ms stagger
+      return child.animate().fadeIn(
+        delay: Duration(milliseconds: delayMs),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic, // entrance curves
+      ).slideY(
+        begin: 20.0 / 300.0, // translateY 20px -> 0
+        end: 0.0,
+        delay: Duration(milliseconds: delayMs),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+      );
+    }
+
     Widget content;
     if (isMobile) {
       // Mobile Single Column: Avatar card on top, then text contents
       content = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          RevealAnimation(
-            delay: const Duration(milliseconds: 160),
-            child: AvatarCodeCard(
+          buildEntrance(
+            AvatarCodeCard(
               lines: heroConfig.avatarCode,
               filename: heroConfig.avatarFilename,
             ),
+            5,
           ),
           const SizedBox(height: 32),
-          StaggeredRevealList(
-            initialDelay: Duration.zero,
-            interval: const Duration(milliseconds: 40),
-            children: leftColumnWidgets,
-          ),
+          buildEntrance(eyebrowWidget, 0),
+          const SizedBox(height: 16),
+          buildEntrance(headlineWidget, 1),
+          const SizedBox(height: 24),
+          buildEntrance(subHeadlineWidget, 2),
+          const SizedBox(height: 40),
+          buildEntrance(ctasWidget, 3),
+          const SizedBox(height: 48),
+          buildEntrance(metricsWidget, 4),
         ],
       );
     } else {
@@ -188,24 +218,34 @@ class HeroSection extends StatelessWidget {
           // Left 60%
           Expanded(
             flex: 60,
-            child: StaggeredRevealList(
-              initialDelay: Duration.zero,
-              interval: const Duration(milliseconds: 40),
-              children: leftColumnWidgets,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildEntrance(eyebrowWidget, 0),
+                const SizedBox(height: 16),
+                buildEntrance(headlineWidget, 1),
+                const SizedBox(height: 24),
+                buildEntrance(subHeadlineWidget, 2),
+                const SizedBox(height: 40),
+                buildEntrance(ctasWidget, 3),
+                const SizedBox(height: 48),
+                buildEntrance(metricsWidget, 4),
+              ],
             ),
           ),
           SizedBox(width: gutterSpacing),
           // Right 40%
           Expanded(
             flex: 40,
-            child: RevealAnimation(
-              delay: const Duration(milliseconds: 160),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: AvatarCodeCard(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: buildEntrance(
+                AvatarCodeCard(
                   lines: heroConfig.avatarCode,
                   filename: heroConfig.avatarFilename,
                 ),
+                5,
               ),
             ),
           ),
@@ -267,7 +307,11 @@ class _BlinkingCursorState extends State<BlinkingCursor>
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.disableAnimationsOf(context)) {
-      return const SizedBox.shrink(); // Static/no cursor when animations disabled
+      return Container(
+        width: 8.0,
+        height: 12.0,
+        color: AppColors.accent,
+      );
     }
 
     return AnimatedBuilder(
@@ -406,14 +450,16 @@ class _PrimaryCTAState extends State<PrimaryCTA> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktop;
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
+      onEnter: (_) => setState(() => _isHovered = isDesktop),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: _isHovered ? AppColors.accentBright : AppColors.accent,
@@ -451,14 +497,16 @@ class _GhostCTAState extends State<GhostCTA> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktop;
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
+      onEnter: (_) => setState(() => _isHovered = isDesktop),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.transparent,
@@ -580,7 +628,7 @@ class AvatarCodeCard extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFEF5350), // soft red
+                  color: AppColors.chromeDotRed,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -589,7 +637,7 @@ class AvatarCodeCard extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFFCA28), // soft yellow
+                  color: AppColors.chromeDotYellow,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -598,7 +646,7 @@ class AvatarCodeCard extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF9CCC65), // soft green
+                  color: AppColors.chromeDotGreen,
                   shape: BoxShape.circle,
                 ),
               ),

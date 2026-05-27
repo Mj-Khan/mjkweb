@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/app_spacing.dart';
-import '../../core/app_typography.dart';
 import '../../core/icon_resolver.dart';
 import '../../data/app_data.dart';
 import '../../models/profile.dart';
@@ -41,6 +40,7 @@ class _MobileTopBarState extends State<MobileTopBar>
     with SingleTickerProviderStateMixin {
   bool _overlayOpen = false;
   late final AnimationController _animController;
+  OverlayEntry? _overlayEntry;
 
   // Human-readable labels
   static const Map<String, String> _sectionLabels = {
@@ -63,18 +63,53 @@ class _MobileTopBarState extends State<MobileTopBar>
 
   @override
   void dispose() {
+    _removeOverlay();
     _animController.dispose();
     super.dispose();
   }
 
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry?.dispose();
+    _overlayEntry = null;
+  }
+
   void _openOverlay() {
+    final appData = AppData.of(context);
+    final profile = appData.content.profile;
+
+    _overlayEntry = OverlayEntry(
+      builder: (ctx) => AnimatedBuilder(
+        animation: _animController,
+        builder: (ctx, child) => Opacity(
+          opacity: _animController.value,
+          child: Transform.translate(
+            offset: Offset(0, (1 - _animController.value) * 16),
+            child: child,
+          ),
+        ),
+        child: _OverlayNav(
+          navSections: widget.navSections,
+          activeSection: widget.activeSection,
+          sectionLabels: _sectionLabels,
+          profile: profile,
+          onClose: _closeOverlay,
+          onNavTap: _handleNavTap,
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
     setState(() => _overlayOpen = true);
     _animController.forward();
   }
 
   void _closeOverlay() {
     _animController.reverse().then((_) {
-      if (mounted) setState(() => _overlayOpen = false);
+      if (mounted) {
+        _removeOverlay();
+        setState(() => _overlayOpen = false);
+      }
     });
   }
 
@@ -91,74 +126,37 @@ class _MobileTopBarState extends State<MobileTopBar>
 
   @override
   Widget build(BuildContext context) {
-    final appData = AppData.of(context);
-    final profile = appData.content.profile;
-
-    return Stack(
-      children: [
-        // ── 56px sticky top bar ─────────────────────────────────────────
-        Container(
-          height: AppSpacing.topBarHeight,
-          decoration: const BoxDecoration(
-            color: AppColors.surfaceLow,
-            border: Border(
-              bottom: BorderSide(color: AppColors.borderDefault, width: 1),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutterMobile),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // LEFT — monogram
-              Text(
-                'MK',
-                style: AppTypography.monoLabel.copyWith(
-                  color: AppColors.accent,
-                  fontSize: 13,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              // RIGHT — hamburger
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: _openOverlay,
-                  child: const Icon(
-                    Icons.menu,
-                    color: AppColors.foregroundPrimary,
-                    size: 22,
-                  ),
-                ),
-              ),
-            ],
-          ),
+    return Container(
+      height: AppSpacing.topBarHeight,
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceLow,
+        border: Border(
+          bottom: BorderSide(color: AppColors.borderDefault, width: 1),
         ),
-
-        // ── Full-screen overlay ─────────────────────────────────────────
-        if (_overlayOpen)
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _animController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _animController.value,
-                  child: Transform.translate(
-                    offset: Offset(0, (1 - _animController.value) * 16),
-                    child: child,
-                  ),
-                );
-              },
-              child: _OverlayNav(
-                navSections: widget.navSections,
-                activeSection: widget.activeSection,
-                sectionLabels: _sectionLabels,
-                profile: profile,
-                onClose: _closeOverlay,
-                onNavTap: _handleNavTap,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutterMobile),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // LEFT — identity block (monogram + name)
+          Builder(builder: (ctx) {
+            final appData = AppData.of(ctx);
+            return _MobileIdentityBlock(name: appData.content.profile.name);
+          }),
+          // RIGHT — hamburger / close icon
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: _overlayOpen ? _closeOverlay : _openOverlay,
+              child: Icon(
+                _overlayOpen ? Icons.close : Icons.menu,
+                color: AppColors.foregroundPrimary,
+                size: 22,
               ),
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -190,7 +188,7 @@ class _OverlayNav extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Top: X close button ────────────────────────────────────
+            // ── Top: identity block + X close button ──────────────────
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.gutterMobile,
@@ -199,14 +197,7 @@ class _OverlayNav extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'MK',
-                    style: AppTypography.monoLabel.copyWith(
-                      color: AppColors.accent,
-                      fontSize: 13,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
+                  _MobileIdentityBlock(name: profile.name),
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
@@ -242,6 +233,12 @@ class _OverlayNav extends StatelessWidget {
                 ),
               ),
             ),
+
+            // ── Hairline ───────────────────────────────────────────────
+            Container(height: 1, color: AppColors.borderDefault),
+
+            // ── CV Download ────────────────────────────────────────────
+            const _OverlayCvButton(),
 
             // ── Hairline ───────────────────────────────────────────────
             Container(height: 1, color: AppColors.borderDefault),
@@ -382,6 +379,126 @@ class _OverlaySocialIconState extends State<_OverlaySocialIcon> {
             key: ValueKey(_hovered),
             color: _hovered ? AppColors.accent : AppColors.foregroundSubtle,
             size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Mobile identity block (top bar & overlay header) ─────────────────────────
+
+class _MobileIdentityBlock extends StatelessWidget {
+  final String name;
+  const _MobileIdentityBlock({required this.name});
+
+  /// First 2 initials from name.
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length == 1) return parts[0].substring(0, 2).toUpperCase();
+    return '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Bordered monogram tile
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.borderDefault, width: 1),
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: Center(
+            child: Text(
+              _initials,
+              style: const TextStyle(
+                fontFamily: 'IBM Plex Mono',
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: AppColors.accent,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        // Name text
+        Text(
+          name,
+          style: const TextStyle(
+            fontFamily: 'Geist',
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: AppColors.foregroundPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Download CV row in overlay ────────────────────────────────────────────────
+
+class _OverlayCvButton extends StatefulWidget {
+  const _OverlayCvButton();
+
+  @override
+  State<_OverlayCvButton> createState() => _OverlayCvButtonState();
+}
+
+class _OverlayCvButtonState extends State<_OverlayCvButton> {
+  bool _hovered = false;
+
+  Future<void> _download() async {
+    const url = 'Abdul-Mujeeb-Khan-Resume.pdf';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit:  (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: _download,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          color: _hovered
+              ? AppColors.accent.withValues(alpha: 0.06)
+              : Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.gutterMobile,
+            vertical: 20,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.download_outlined,
+                size: 18,
+                color: _hovered ? AppColors.accent : AppColors.foregroundSubtle,
+              ),
+              const SizedBox(width: 12),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style: TextStyle(
+                  fontFamily: 'IBM Plex Mono',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.5,
+                  color: _hovered ? AppColors.accent : AppColors.foregroundSubtle,
+                ),
+                child: const Text('DOWNLOAD CV'),
+              ),
+            ],
           ),
         ),
       ),

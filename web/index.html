@@ -19,7 +19,8 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Abdul Mujeeb Khan — Senior Flutter Developer. 5 years building production mobile apps across consumer, enterprise, and startup domains.">
-  <meta name="theme-color" content="#131313">
+  <!-- Match AppColors.backgroundBase so there's no white flash before Flutter paints its first frame -->
+  <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -46,6 +47,23 @@
 
   <title>Abdul Mujeeb Khan — Flutter Developer</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* ── Pre-Flutter paint: match AppColors.backgroundBase exactly ─────────
+       The browser renders <html> and <body> before Flutter's engine boots.
+       Without this, the default white background shows for 100–500 ms while
+       the Dart runtime and flutter_bootstrap.js initialise — causing a flash.
+       Setting the background here means the user sees #0A0A0A from the very
+       first HTTP response, with zero visible transition into the Flutter app.
+    ──────────────────────────────────────────────────────────────────────── */
+    html, body {
+      background-color: #0A0A0A;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* prevent scrollbar flash before Flutter takes over */
+    }
+  </style>
 </head>
 <body>
   <!--

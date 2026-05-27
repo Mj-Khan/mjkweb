@@ -18,7 +18,12 @@
       "}"
     ],
     "cta_primary":   { "label": "VIEW PROJECTS", "target": "work" },
-    "cta_secondary": { "label": "GET IN TOUCH",  "target": "contact" }
+    "cta_secondary": { "label": "GET IN TOUCH",  "target": "contact" },
+    "headline_segments": [
+      { "text": "Building ",              "gradient": false },
+      { "text": "Production-Grade\nMobile", "gradient": true  },
+      { "text": " Systems.",              "gradient": false }
+    ]
   },
 
   "now": {
@@ -59,7 +64,11 @@
     "submit_label":      "SEND",
     "success_primary":   "OPENING YOUR MAIL CLIENT",
     "success_secondary": "If nothing opened, email mjkhan7124@gmail.com directly.",
-    "direct_note":       "// or email me directly at mjkhan7124@gmail.com"
+    "direct_note":       "// or email me directly at mjkhan7124@gmail.com",
+    "heading_segments": [
+      { "text": "Let's build ", "gradient": false },
+      { "text": "something.",   "gradient": true  }
+    ]
   },
 
   "footer": {

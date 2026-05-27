@@ -11,6 +11,10 @@ import '../../core/motion.dart';
 import '../../data/app_data.dart';
 import '../../models/profile.dart';
 import '../../models/site_config.dart';
+import '../components/gradient_text.dart';
+import '../components/lit_edge_card.dart';
+import '../components/scroll_reveal.dart';
+import '../components/segmented_headline.dart';
 
 /// High-fidelity, fully responsive Contact Section.
 /// Renders as a 2-column layout on desktop/tablet (Form 60% / Direct Contacts 40%)
@@ -32,16 +36,25 @@ class ContactSection extends StatelessWidget {
     final profile = appData.content.profile;
     final isMobile = context.isMobile;
 
-    // Contact Column Content
-    final formColumn = ContactForm(
-      contactConfig: contactConfig,
-      email: profile.email,
+    // Wrap each column in a LitEdgeCard for the premium lit-edge border treatment.
+    // isClickable:false suppresses the hover-lift — purely structural richness.
+    final formPanel = LitEdgeCard(
+      padding: const EdgeInsets.all(32),
+      isClickable: false,
+      child: ContactForm(
+        contactConfig: contactConfig,
+        email: profile.email,
+      ),
     );
 
-    final directColumn = _DirectContactsBlock(
-      profile: profile,
-      socialIconMap: appData.siteConfig.socialIconMap,
-      onLaunch: _launchUrl,
+    final directPanel = LitEdgeCard(
+      padding: const EdgeInsets.all(28),
+      isClickable: false,
+      child: _DirectContactsBlock(
+        profile: profile,
+        socialIconMap: appData.siteConfig.socialIconMap,
+        onLaunch: _launchUrl,
+      ),
     );
 
     Widget content;
@@ -50,9 +63,9 @@ class ContactSection extends StatelessWidget {
       content = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          formColumn,
-          const SizedBox(height: 48),
-          directColumn,
+          formPanel,
+          const SizedBox(height: 24),
+          directPanel,
         ],
       );
     } else {
@@ -60,62 +73,82 @@ class ContactSection extends StatelessWidget {
       content = Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left 60%: Form
+          // Left 60%: Form panel
           Expanded(
             flex: 60,
-            child: formColumn,
+            child: formPanel,
           ),
-          const SizedBox(width: 48),
-          // Right 40%: Direct Contacts
+          const SizedBox(width: 32),
+          // Right 40%: Direct Contacts panel
           Expanded(
             flex: 40,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 12.0), // Aligns with first field input line
-              child: directColumn,
-            ),
+            child: directPanel,
           ),
         ],
       );
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.borderDefault,
-            width: 1,
+    return ScrollReveal(
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.borderDefault,
+              width: 1,
+            ),
           ),
         ),
-      ),
-      padding: AppSpacing.sectionPadding(isMobile: isMobile),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Section Title block ───────────────────────────────────────────
-          RevealAnimation(
-            child: Column(
+        padding: AppSpacing.sectionPadding(isMobile: isMobile),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '// ${contactConfig.heading.toUpperCase()}',
+                  '// CONTACT',
                   style: AppTypography.monoLabel.copyWith(
                     color: AppColors.accent,
                   ),
                 ),
                 const SizedBox(height: 8),
+                // Selective gradient heading or plain fallback
+                if (contactConfig.headingSegments.isNotEmpty)
+                  SegmentedHeadline(
+                    segments: contactConfig.headingSegments,
+                    style: AppTypography.sectionHeading(isMobile: isMobile),
+                    fallbackText: contactConfig.heading,
+                    maxGradientWidth: 320.0,
+                  )
+                else
+                  GradientText(
+                    contactConfig.heading,
+                    style: AppTypography.sectionHeading(isMobile: isMobile),
+                    maxGradientWidth: 500.0,
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.accent,
+                        AppColors.accentSecondary,
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 12),
                 Text(
                   contactConfig.subLine,
-                  style: AppTypography.sectionHeading(isMobile: isMobile),
+                  style: AppTypography.withColor(
+                    AppTypography.bodyLarge,
+                    AppColors.foregroundMuted,
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 48),
+            const SizedBox(height: 48),
 
-          // ── Responsive columns content ────────────────────────────────────
-          content,
-        ],
+            // ── Responsive columns content ────────────────────────────────────
+            content,
+          ],
+        ),
       ),
     );
   }
@@ -239,7 +272,7 @@ class _ContactFormState extends State<ContactForm> {
             controller: _nameController,
             errorText: _nameError,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Email field
           ContactTextField(
@@ -248,7 +281,7 @@ class _ContactFormState extends State<ContactForm> {
             errorText: _emailError,
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Subject field
           ContactTextField(
@@ -256,7 +289,7 @@ class _ContactFormState extends State<ContactForm> {
             controller: _subjectController,
             errorText: _subjectError,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Message field
           ContactTextField(
@@ -265,7 +298,7 @@ class _ContactFormState extends State<ContactForm> {
             errorText: _messageError,
             isMultiline: true,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Submit Button row (right-aligned)
           Row(
@@ -370,6 +403,7 @@ class _ContactTextFieldState extends State<ContactTextField> {
         // Bottom border transitions color on focus
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           height: 1.0,
           color: _isFocused ? AppColors.accent : AppColors.borderDefault,
         ),
@@ -490,12 +524,14 @@ class _DirectContactRowState extends State<DirectContactRow> {
   Widget build(BuildContext context) {
     final canTap = widget.onTap != null;
 
+    final isDesktop = context.isDesktop;
+
     return MouseRegion(
       onEnter: (_) {
-        if (canTap) setState(() => _isHovered = true);
+        if (canTap && isDesktop) setState(() => _isHovered = true);
       },
       onExit: (_) {
-        if (canTap) setState(() => _isHovered = false);
+        if (canTap && isDesktop) setState(() => _isHovered = false);
       },
       cursor: canTap ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
@@ -510,6 +546,7 @@ class _DirectContactRowState extends State<DirectContactRow> {
               // 2px Matrix Emerald accent left-border slides in (AnimatedContainer)
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
                 width: 2.0,
                 height: 38.0,
                 color: _isHovered ? AppColors.accent : Colors.transparent,
@@ -571,14 +608,16 @@ class _SubmitButtonState extends State<_SubmitButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktop;
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
+      onEnter: (_) => setState(() => _isHovered = isDesktop),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: _isHovered ? AppColors.accentBright : AppColors.accent,

@@ -157,16 +157,34 @@ class _FooterSocialIconState extends State<_FooterSocialIcon> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktop;
+    final targetColor = _isHovered ? AppColors.accentBright : AppColors.accent;
+
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) {
+        if (isDesktop) {
+          setState(() => _isHovered = true);
+        }
+      },
+      onExit: (_) {
+        if (isDesktop) {
+          setState(() => _isHovered = false);
+        }
+      },
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
-        child: Icon(
-          widget.icon,
-          size: 20.0, // authoritative 20px size
-          color: _isHovered ? AppColors.accentBright : AppColors.accent,
+        child: TweenAnimationBuilder<Color?>(
+          tween: ColorTween(end: targetColor),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          builder: (context, color, child) {
+            return Icon(
+              widget.icon,
+              size: 20.0, // authoritative 20px size
+              color: color ?? targetColor,
+            );
+          },
         ),
       ),
     );

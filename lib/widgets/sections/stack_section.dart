@@ -10,6 +10,7 @@ import '../../core/motion.dart';
 import '../../data/app_data.dart';
 import '../../models/skill.dart';
 import '../components/now_widget.dart';
+import '../components/scroll_reveal.dart';
 
 /// High-fidelity, fully responsive Stack + Now Section.
 /// Renders a dynamic two-column layout on desktop (Stack 65% / Now 35%) when enabled,
@@ -95,17 +96,19 @@ class StackSection extends StatelessWidget {
       );
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.borderDefault,
-            width: 1,
+    return ScrollReveal(
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.borderDefault,
+              width: 1,
+            ),
           ),
         ),
+        padding: AppSpacing.sectionPadding(isMobile: isMobile),
+        child: content,
       ),
-      padding: AppSpacing.sectionPadding(isMobile: isMobile),
-      child: content,
     );
   }
 }
